@@ -1,15 +1,15 @@
 import React from 'react';
 import Loading from '../../components/shared/Loading/Loading';
+import { useDrawings } from '../../hooks/useDrawings';
 
 const Drawings = () => {
-    const loading = true;
+    const { data, isLoading } = useDrawings();
 
-    if(loading){
-        return <Loading />
-    }
+    if (isLoading) return <Loading />;
+
     return (
         <div className='text-4xl text-center'>
-            Drawings
+            Drawings {data.length}
         </div>
     );
 };

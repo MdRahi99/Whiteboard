@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Drawings from "../pages/Drawings/Drawings";
-import Error from "../components/shared/Error/Error";
+import NotFound from "../components/shared/NotFound/NotFound";
 
 export const router = createBrowserRouter([
     {
@@ -15,6 +15,6 @@ export const router = createBrowserRouter([
     },
     {
         path: "*",
-        element: <Error />
+        element: <NotFound />
     }
 ]);

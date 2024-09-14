@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Error = () => {
+const NotFound = () => {
     return (
         <div className='flex flex-col items-center justify-center h-screen gap-8'>
             <h3 className='text-2xl font-semibold'>404 Not Found</h3>
@@ -10,4 +10,4 @@ const Error = () => {
     );
 };
 
-export default Error;
+export default NotFound;
