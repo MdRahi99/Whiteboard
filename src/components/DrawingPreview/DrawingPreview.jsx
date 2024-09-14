@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DrawingPreview = ({ drawing }) => {
+const DrawingPreview = ({ drawing, height, width }) => {
     const canvasRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -44,11 +44,7 @@ const DrawingPreview = ({ drawing }) => {
         }
     }, [drawing]);
 
-    return (
-        <div className='w-full h-full flex items-center justify-center'>
-            <canvas ref={canvasRef} className='w-fit h-fit' />
-        </div>
-    );
+    return <canvas ref={canvasRef} height={height} width={width} />;
 };
 
 export default DrawingPreview;

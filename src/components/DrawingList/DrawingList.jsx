@@ -16,11 +16,11 @@ const DrawingList = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {data?.map((drawing) => (
                     <Link to={`/drawings/${drawing._id}`} key={drawing._id} className="relative group">
-                        <div className="bg-white rounded-md border-2 border-indigo-100 overflow-hidden transition-all duration-300">
+                        <div className="bg-gradient-to-t from-indigo-50 to-indigo-100 rounded-md overflow-hidden transition-all duration-300">
                             {/* Preview Canvas */}
-                            <div className="relative aspect-square bg-gray-100">
-                                <DrawingPreview drawing={drawing} />
-                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white text-sm font-medium p-2">
+                            <div className="relative aspect-square">
+                                <DrawingPreview drawing={drawing} height={280} width={350} />
+                                <div className="absolute inset-0 bg-gray-700 bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white text-sm font-medium p-2">
                                     <div className="text-center">
                                         <h2 className="text-md font-semibold mb-1">{drawing.title}</h2>
                                         <p>{new Date(drawing.createdAt).toLocaleDateString()}</p>
@@ -29,19 +29,19 @@ const DrawingList = () => {
                             </div>
 
                             {/* Footer Info */}
-                            <div className="px-2 py-3 bg-gray-50 flex justify-between items-center text-gray-600 text-xs">
+                            <div className="px-3 py-4 bg-gradient-to-r from-indigo-400 to-indigo-400 flex justify-between items-center text-white text-sm">
                                 <div className="flex items-center space-x-2">
                                     <span className="flex items-center">
-                                        <FaPencilAlt className="text-indigo-500 pr-1" /> {drawing.lines.length}
+                                        <FaPencilAlt className="pr-1" /> {drawing.lines.length}
                                     </span>
                                     <span className="flex items-center">
-                                        <FaShapes className="text-indigo-500 pr-1" /> {drawing.shapes.length}
+                                        <FaShapes className="pr-1" /> {drawing.shapes.length}
                                     </span>
                                     <span className="flex items-center">
-                                        <FaFont className="text-indigo-500 pr-1" /> {drawing.texts.length}
+                                        <FaFont className="pr-1" /> {drawing.texts.length}
                                     </span>
                                 </div>
-                                <Link to={`/drawings/${drawing._id}`} className="text-indigo-500 font-semibold hover:text-indigo-800">View</Link>
+                                <Link to={`/drawings/${drawing._id}`} className="font-semibold hover:text-indigo-900">View</Link>
                             </div>
                         </div>
                     </Link>

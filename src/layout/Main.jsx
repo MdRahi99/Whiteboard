@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 const Main = () => {
     return (
-        <div className='flex flex-col gap-8 max-w-8xl mx-auto px-4 lg:px-8'>
+        <div className='flex flex-col gap-8 max-w-8xl mx-auto px-4 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-200 min-h-screen'>
             <Navbar />
             <Outlet />
         </div>
