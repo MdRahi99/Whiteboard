@@ -1,10 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ResponsiveMenu from 'react-responsive-navbar';
 import { FaHome, FaSignInAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { VscCheckAll } from "react-icons/vsc";
+import { BiSolidMessageEdit } from "react-icons/bi";
 import { RiPencilRuler2Line } from 'react-icons/ri';
 
 const Navbar = () => {
+    const location = useLocation();
+
+    const getLinkClass = (path) => {
+        return location.pathname === path
+            ? 'text-indigo-600 font-semibold'
+            : 'text-gray-600 hover:text-indigo-600';
+    };
+
     return (
         <ResponsiveMenu
             menuOpenButton={<FaBars className="text-gray-600 text-2xl" />}
@@ -20,13 +30,20 @@ const Navbar = () => {
                             <span className="ml-2 text-2xl font-bold text-gray-800">Whiteboard</span>
                         </div>
 
-                        <div className="hidden md:ml-6 md:flex md:space-x-8">
+                        <div className="hidden md:ml-6 md:flex md:space-x-12 items-center">
                             <Link
                                 to="/"
-                                className="text-gray-500 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                                className={`text-sm font-medium flex items-center justify-center gap-1 rounded-md ${getLinkClass('/')}`}
                             >
-                                <FaHome className="mr-1" />
-                                Home
+                                <VscCheckAll className="text-lg mt-1" />
+                                <span>All Drawings</span>
+                            </Link>
+                            <Link
+                                to="/add-drawings"
+                                className={`text-sm font-medium flex items-center justify-center gap-1 rounded-md ${getLinkClass('/add-drawings')}`}
+                            >
+                                <BiSolidMessageEdit className="text-lg mt-1" />
+                                <span>Add Drawings</span>
                             </Link>
                         </div>
 
