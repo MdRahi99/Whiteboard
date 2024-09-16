@@ -242,8 +242,8 @@ const AddDrawings = () => {
           placeholder="Drawing Title"
         />
       </div>
-      <div className='flex items-center justify-between mb-4'>
-        <div className="flex items-center gap-4">
+      <div className='flex flex-col md:flex-row md:items-center justify-between mb-4'>
+        <div className="flex flex-wrap items-center gap-4">
           <Pencil onClick={() => setTool('pencil')} className={`cursor-pointer ${tool === 'pencil' && 'text-blue-500'}`} />
           <Square onClick={() => setTool('rectangle')} className={`cursor-pointer ${tool === 'rectangle' && 'text-blue-500'}`} />
           <Circle onClick={() => setTool('circle')} className={`cursor-pointer ${tool === 'circle' && 'text-blue-500'}`} />
