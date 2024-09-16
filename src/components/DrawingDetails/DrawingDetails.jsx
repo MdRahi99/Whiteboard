@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDrawing, useDeleteDrawing } from '../../hooks/useDrawings';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye } from 'lucide-react';
 import DrawingPreview from '../DrawingPreview/DrawingPreview';
+import { BsFillInfoSquareFill } from "react-icons/bs";
 import Loading from '../shared/Loading/Loading';
 import { MdOutlineDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
@@ -27,7 +28,7 @@ const DrawingDetails = () => {
 
   const tabs = [
     { id: 'preview', label: 'Preview', icon: Eye },
-    { id: 'details', label: 'Details', icon: ArrowLeft },
+    { id: 'details', label: 'Details', icon: BsFillInfoSquareFill },
   ];
 
   const handleDelete = async (id) => {
@@ -46,6 +47,12 @@ const DrawingDetails = () => {
     setIsUpdateModalOpen(true);
   };
 
+  const drawingData = {
+    lines: lines || [],
+    shapes: shapes || [],
+    texts: texts || []
+  };
+
   return (
     <div className="min-h-screen">
       <ToastContainer position="top-center" autoClose={1000} />
@@ -58,25 +65,34 @@ const DrawingDetails = () => {
 
         {/* Tabs */}
         <div className="flex items-center justify-between border-b border-gray-200">
+          <Link
+            to="/"
+            className='flex items-center justify-start gap-1 text-gray-500 hover:text-indigo-600'
+          >
+            <ArrowLeft />
+            <span className='font-medium'>
+              Back
+            </span>
+          </Link>
+
           <div className='flex items-center justify-start'>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center px-6 py-3 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'text-purple-600 border-b-2 border-purple-600'
-                    : 'text-gray-500 hover:text-purple-600'
-                }`}
+                className={`flex items-center px-6 py-3 font-medium text-sm transition-colors duration-200 ${activeTab === tab.id
+                  ? 'text-indigo-600 border-b-2 border-indigo-600'
+                  : 'text-gray-500 hover:text-indigo-600'
+                  }`}
               >
-                <tab.icon className="w-5 h-5 mr-2" />
+                <tab.icon className="w-4 h-4 mr-2" />
                 {tab.label}
               </button>
             ))}
           </div>
           <div className='flex items-center justify-end gap-4'>
-            <button 
-              onClick={() => handleDelete(_id)} 
+            <button
+              onClick={() => handleDelete(_id)}
               className='flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-lg'
               disabled={deleteDrawingMutation.isLoading}
             >
@@ -102,7 +118,7 @@ const DrawingDetails = () => {
               transition={{ duration: 0.5 }}
             >
               <div className="bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
-                <DrawingPreview drawing={data} height={420} width={420} />
+                <DrawingPreview drawing={drawingData} height={420} width={420} />
               </div>
             </motion.div>
           )}

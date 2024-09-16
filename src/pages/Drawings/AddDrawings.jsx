@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCreateDrawing } from '../../hooks/useDrawings';
 import { Pencil, Square, Circle, Type, Trash2, Save, Undo } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddDrawings = () => {
   const canvasRef = useRef(null);
@@ -16,6 +17,7 @@ const AddDrawings = () => {
   const [lines, setLines] = useState([]);
   const [currentLine, setCurrentLine] = useState([]);
   const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
 
   const createDrawingMutation = useCreateDrawing();
 
@@ -217,6 +219,9 @@ const AddDrawings = () => {
         clearCanvas();
         setTitle('');
         setHistory([]);
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
       },
       onError: (error) => {
         toast.error(`Error saving drawing: ${error.message}`);
