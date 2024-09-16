@@ -26,10 +26,10 @@ const Navbar = () => {
                 menu={
                     <nav>
                         <div className="flex justify-between h-16 items-center border-b border-indigo-200 p-2 rounded-xl">
-                            <div className="flex-shrink-0 flex items-center">
+                            <Link to='/' className="flex-shrink-0 flex items-center">
                                 <RiPencilRuler2Line className="h-8 w-8 text-indigo-600" />
                                 <span className="ml-2 text-2xl font-bold text-gray-800">Whiteboard</span>
-                            </div>
+                            </Link>
                             
                             <div className="hidden md:ml-6 md:flex md:space-x-12 items-center">
                                 <Link

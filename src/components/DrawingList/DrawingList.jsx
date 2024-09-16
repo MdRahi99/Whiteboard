@@ -39,7 +39,7 @@ const DrawingList = () => {
                         {/* Delete Button */}
                         <button
                             onClick={(event) => handleDelete(drawing?._id, event)}
-                            className='absolute -right-2 -top-2 z-50 flex items-center gap-1 bg-indigo-500 hover:bg-red-500 text-white p-1 rounded-full'
+                            className='absolute -right-2 -top-2 z-30 flex items-center gap-1 bg-indigo-500 hover:bg-red-500 text-white p-1 rounded-full'
                             disabled={deleteDrawingMutation.isLoading}
                         >
                             <MdOutlineDelete className='text-lg' />

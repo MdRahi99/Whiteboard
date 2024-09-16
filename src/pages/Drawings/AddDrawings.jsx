@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddDrawings = () => {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
   const [ctx, setCtx] = useState(null);
   const [drawing, setDrawing] = useState(false);
   const [tool, setTool] = useState('pencil');
@@ -17,19 +18,34 @@ const AddDrawings = () => {
   const [lines, setLines] = useState([]);
   const [currentLine, setCurrentLine] = useState([]);
   const [history, setHistory] = useState([]);
+  const [canvasSize, setCanvasSize] = useState({ width: 1400, height: 400 });
   const navigate = useNavigate();
 
   const createDrawingMutation = useCreateDrawing();
 
+  // Set canvas context
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     setCtx(context);
   }, []);
 
+  // Adjust canvas size responsively
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const container = containerRef.current;
+      const width = container.offsetWidth;
+      const height = width / 3.5; // Maintain aspect ratio (approx 16:4)
+      setCanvasSize({ width, height });
+    };
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
+
   useEffect(() => {
     drawOnCanvas();
-  }, [lines, shapes, texts, currentLine]);
+  }, [lines, shapes, texts, currentLine, canvasSize]);
 
   const startDrawing = (e) => {
     setDrawing(true);
@@ -129,7 +145,7 @@ const AddDrawings = () => {
       ctx.fillText(text.content, text.position.x, text.position.y);
     });
 
-    // Draw current line without initial indicator
+    // Draw current line
     if (currentLine.length > 1) {
       ctx.beginPath();
       ctx.moveTo(currentLine[0][0], currentLine[0][1]);
@@ -139,30 +155,14 @@ const AddDrawings = () => {
       ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
       ctx.stroke();
-
-      if (tool === 'rectangle' && currentLine.length === 2) {
-        const [start, end] = currentLine;
-        ctx.strokeRect(
-          Math.min(start[0], end[0]),
-          Math.min(start[1], end[1]),
-          Math.abs(end[0] - start[0]),
-          Math.abs(end[1] - start[1])
-        );
-      } else if (tool === 'circle' && currentLine.length === 2) {
-        const [start, end] = currentLine;
-        const radius = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2));
-        ctx.beginPath();
-        ctx.arc(start[0], start[1], radius, 0, 2 * Math.PI);
-        ctx.stroke();
-      }
     }
   };
 
   const getMousePos = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      x: (e.clientX - rect.left) * (canvasRef.current.width / rect.width),
+      y: (e.clientY - rect.top) * (canvasRef.current.height / rect.height)
     };
   };
 
@@ -230,7 +230,7 @@ const AddDrawings = () => {
   };
 
   return (
-    <div className="w-full max-w-8xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div ref={containerRef} className="w-full max-w-full mx-auto p-6 bg-white rounded-xl">
       <ToastContainer position="top-center" autoClose={1000} />
       <h2 className="text-2xl font-bold mb-4">Create New Drawing</h2>
       <div className="mb-4">
@@ -238,57 +238,42 @@ const AddDrawings = () => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter drawing title"
-          className="w-[40%] p-2 border border-gray-300 focus:outline-none rounded"
+          className="p-2 border border-gray-300 rounded-md w-full md:w-2/5 focus:outline-none focus:border-indigo-600"
+          placeholder="Drawing Title"
         />
       </div>
-      <div className="flex space-x-4 mb-8 items-center justify-end">
-        <button onClick={() => setTool('pencil')} className={`p-2 ${tool === 'pencil' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
-          <Pencil size={20} />
-        </button>
-        <button onClick={() => setTool('rectangle')} className={`p-2 ${tool === 'rectangle' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
-          <Square size={20} />
-        </button>
-        <button onClick={() => setTool('circle')} className={`p-2 ${tool === 'circle' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}>
-          <Circle size={20} />
-        </button>
-        <button onClick={addText} className="p-2 bg-gray-200 rounded">
-          <Type size={20} />
-        </button>
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          className="p-1 border border-gray-300 rounded"
-        />
-        <input
-          type="number"
-          value={lineWidth}
-          onChange={(e) => setLineWidth(Number(e.target.value))}
-          min="1"
-          max="20"
-          className="w-16 p-1 border border-gray-300 rounded"
-        />
-        <button onClick={undo} className="p-2 bg-yellow-500 text-white rounded" disabled={history.length === 0}>
-          <Undo size={20} />
-        </button>
-        <button onClick={clearCanvas} className="p-2 bg-red-500 text-white rounded">
-          <Trash2 size={20} />
-        </button>
-        <button onClick={saveDrawing} className="p-2 bg-green-500 text-white rounded">
-          <Save size={20} />
+      <div className='flex items-center justify-between mb-4'>
+        <div className="flex items-center gap-4">
+          <Pencil onClick={() => setTool('pencil')} className={`cursor-pointer ${tool === 'pencil' && 'text-blue-500'}`} />
+          <Square onClick={() => setTool('rectangle')} className={`cursor-pointer ${tool === 'rectangle' && 'text-blue-500'}`} />
+          <Circle onClick={() => setTool('circle')} className={`cursor-pointer ${tool === 'circle' && 'text-blue-500'}`} />
+          <Type onClick={addText} className="cursor-pointer" />
+          <Trash2 onClick={clearCanvas} className="cursor-pointer" />
+          <Undo onClick={undo} className="cursor-pointer" />
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+          <div className="flex items-center gap-2">
+            <label className="block text-gray-700">Line Width</label>
+            <input type="number" min="1" max="10" value={lineWidth} onChange={(e) => setLineWidth(parseInt(e.target.value))} className='border border-gray-300 focus:border-indigo-600 focus:outline-none pl-1' />
+          </div>
+        </div>
+        <button
+          onClick={saveDrawing}
+          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+        >
+          <Save className="mr-2 inline-block" /> Save Drawing
         </button>
       </div>
-      <canvas
-        ref={canvasRef}
-        width={1400}
-        height={400}
-        onMouseDown={startDrawing}
-        onMouseMove={draw}
-        onMouseUp={stopDrawing}
-        onMouseOut={stopDrawing}
-        className="border border-gray-300 rounded"
-      />
+      <div className="border border-gray-300 focus:outline-none rounded-xl overflow-hidden relative">
+        <canvas
+          ref={canvasRef}
+          width={canvasSize.width}
+          height={canvasSize.height}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          className="border border-gray-300 cursor-crosshair"
+        />
+      </div>
     </div>
   );
 };

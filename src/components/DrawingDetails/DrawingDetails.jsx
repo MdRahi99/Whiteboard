@@ -67,7 +67,7 @@ const DrawingDetails = () => {
         <div className="flex items-center justify-between border-b border-gray-200">
           <Link
             to="/"
-            className='flex items-center justify-start gap-1 text-gray-500 hover:text-indigo-600'
+            className='hidden md:flex items-center justify-start gap-1 text-gray-500 hover:text-indigo-600'
           >
             <ArrowLeft />
             <span className='font-medium'>
@@ -110,7 +110,7 @@ const DrawingDetails = () => {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="py-6">
           {activeTab === 'preview' && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
