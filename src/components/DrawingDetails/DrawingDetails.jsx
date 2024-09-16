@@ -1,31 +1,52 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDrawing } from '../../hooks/useDrawings';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDrawing, useDeleteDrawing } from '../../hooks/useDrawings';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Eye } from 'lucide-react';
 import DrawingPreview from '../DrawingPreview/DrawingPreview';
 import Loading from '../shared/Loading/Loading';
+import { MdOutlineDelete } from "react-icons/md";
+import { FaRegEdit } from "react-icons/fa";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DrawingDetails = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const { data, isLoading } = useDrawing(params.id);
+  const deleteDrawingMutation = useDeleteDrawing();
   const [activeTab, setActiveTab] = useState('preview');
 
   if (isLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
-  const { createdAt, lines, shapes, texts, title } = data;
+  const { _id, createdAt, lines, shapes, texts, title } = data;
 
   const tabs = [
     { id: 'preview', label: 'Preview', icon: Eye },
     { id: 'details', label: 'Details', icon: ArrowLeft },
   ];
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteDrawingMutation.mutateAsync(id);
+      toast.success('Drawing deleted successfully!');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      toast.error('Failed to delete drawing. Please try again.');
+    }
+  };
+
+  const handleUpdate = (id) => {
+    console.log(id);
+  };
+
   return (
     <div className="min-h-screen">
+      <ToastContainer position="top-center" autoClose={1000} />
       <div className="rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-500 to-indigo-400 p-6 text-white">
@@ -34,21 +55,40 @@ const DrawingDetails = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-6 py-3 font-medium text-sm transition-colors duration-200 ${
-                activeTab === tab.id
-                  ? 'text-purple-600 border-b-2 border-purple-600'
-                  : 'text-gray-500 hover:text-purple-600'
-              }`}
+        <div className="flex items-center justify-between border-b border-gray-200">
+          <div className='flex items-center justify-start'>
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center px-6 py-3 font-medium text-sm transition-colors duration-200 ${
+                  activeTab === tab.id
+                    ? 'text-purple-600 border-b-2 border-purple-600'
+                    : 'text-gray-500 hover:text-purple-600'
+                }`}
+              >
+                <tab.icon className="w-5 h-5 mr-2" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className='flex items-center justify-end gap-4'>
+            <button 
+              onClick={() => handleDelete(_id)} 
+              className='flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-lg'
+              disabled={deleteDrawingMutation.isLoading}
             >
-              <tab.icon className="w-5 h-5 mr-2" />
-              {tab.label}
+              <MdOutlineDelete className='text-lg' />
+              <span className='text-sm font-medium'>
+                {deleteDrawingMutation.isLoading ? 'Deleting...' : 'Delete'}
+              </span>
             </button>
-          ))}
+
+            <button onClick={() => handleUpdate(_id)} className='flex items-center gap-1 bg-sky-500 hover:bg-sky-600 text-white px-2 py-1 rounded-lg'>
+              <FaRegEdit className='text-lg' />
+              <span className='text-sm font-medium'>Update</span>
+            </button>
+          </div>
         </div>
 
         {/* Content */}
