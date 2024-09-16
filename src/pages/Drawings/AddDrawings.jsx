@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCreateDrawing } from '../../hooks/useDrawings';
 import { Pencil, Square, Circle, Type, Trash2, Save, Undo } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
 
 const AddDrawings = () => {
   const canvasRef = useRef(null);
@@ -64,9 +65,9 @@ const AddDrawings = () => {
           const newShapes = [...prevShapes, {
             type: 'rectangle',
             position: { x: Math.min(start[0], end[0]), y: Math.min(start[1], end[1]) },
-            size: { 
-              width: Math.abs(end[0] - start[0]), 
-              height: Math.abs(end[1] - start[1]) 
+            size: {
+              width: Math.abs(end[0] - start[0]),
+              height: Math.abs(end[1] - start[1])
             },
             color
           }];
@@ -199,7 +200,7 @@ const AddDrawings = () => {
 
   const saveDrawing = () => {
     if (title.trim() === '') {
-      alert('Please enter a title for your drawing.');
+      toast.warning('Please enter a title for your drawing.');
       return;
     }
 
@@ -212,19 +213,20 @@ const AddDrawings = () => {
 
     createDrawingMutation.mutate(drawingData, {
       onSuccess: () => {
-        alert('Drawing saved successfully!');
+        toast.success('Drawing added successfully!');
         clearCanvas();
         setTitle('');
         setHistory([]);
       },
       onError: (error) => {
-        alert(`Error saving drawing: ${error.message}`);
+        toast.error(`Error saving drawing: ${error.message}`);
       }
     });
   };
 
   return (
     <div className="w-full max-w-8xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+      <ToastContainer position="top-center" autoClose={1000} />
       <h2 className="text-2xl font-bold mb-4">Create New Drawing</h2>
       <div className="mb-4">
         <input
