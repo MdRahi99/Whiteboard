@@ -9,6 +9,7 @@ import { MdOutlineDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UpdateDrawingModal from '../Modal/UpdateDrawingModal';
 
 const DrawingDetails = () => {
   const params = useParams();
@@ -16,6 +17,7 @@ const DrawingDetails = () => {
   const { data, isLoading } = useDrawing(params.id);
   const deleteDrawingMutation = useDeleteDrawing();
   const [activeTab, setActiveTab] = useState('preview');
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   if (isLoading) {
     return <Loading />;
@@ -40,8 +42,8 @@ const DrawingDetails = () => {
     }
   };
 
-  const handleUpdate = (id) => {
-    console.log(id);
+  const handleUpdate = () => {
+    setIsUpdateModalOpen(true);
   };
 
   return (
@@ -84,7 +86,7 @@ const DrawingDetails = () => {
               </span>
             </button>
 
-            <button onClick={() => handleUpdate(_id)} className='flex items-center gap-1 bg-sky-500 hover:bg-sky-600 text-white px-2 py-1 rounded-lg'>
+            <button onClick={handleUpdate} className='flex items-center gap-1 bg-sky-500 hover:bg-sky-600 text-white px-2 py-1 rounded-lg'>
               <FaRegEdit className='text-lg' />
               <span className='text-sm font-medium'>Update</span>
             </button>
@@ -134,6 +136,12 @@ const DrawingDetails = () => {
           )}
         </div>
       </div>
+
+      <UpdateDrawingModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        drawing={data}
+      />
     </div>
   );
 };
